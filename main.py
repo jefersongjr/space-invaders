@@ -15,10 +15,11 @@ pygame.display.set_icon(icon)
 playerImg = pygame.image.load("img/player.png")
 playerX = 370
 playerY = 480
+playerX_change = 0
 
 #função que cria a nave
-def player():
-    screen.blit(playerImg, (playerX, playerY))
+def player(x, y):
+    screen.blit(playerImg, (x, y))
 
 # Loop do jogo
 running = True
@@ -27,14 +28,26 @@ while running:
     #Cor da tela
     screen.fill((0, 0, 0))
 
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    # Preenche a tela com a cor vermelha
+        # Vericar qual qual seta esta sendo clicada
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                playerX_change = -0.1
+            if event.key == pygame.K_RIGHT:
+                playerX_change = 0.1
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                playerX_change = 0
+ 
+
+    # adicionando movimento ao eixo horizontal
+    playerX += playerX_change
 
     #chamando player na tela
-    player()
+    player(playerX, playerY)
+    
     # Atualiza a tela
     pygame.display.update()
