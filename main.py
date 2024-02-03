@@ -46,6 +46,12 @@ while running:
     # adicionando movimento ao eixo horizontal
     playerX += playerX_change
 
+    # evitando que o nava saia do limite da tela
+    if playerX <= 0:
+        playerX = 0
+    elif playerX >= 736:
+        playerX =736
+
     #chamando player na tela
     player(playerX, playerY)
     
