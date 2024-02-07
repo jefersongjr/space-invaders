@@ -23,7 +23,9 @@ playerX_change = 0
 enemyImg = pygame.image.load("img/enemy.png")
 enemyX = random.randint(0, 800)
 enemyY = random.randint(50, 150)
-enemyX_change = 0
+enemyX_change = 0.3
+enemyY_change = 40
+
 
 #função que cria a nave
 def player(x, y):
@@ -63,6 +65,18 @@ while running:
         playerX = 0
     elif playerX >= 736:
         playerX =736
+
+
+    # adicionando movimento ao eixo horizontal do inimigo
+    enemyX += enemyX_change
+
+    # evitando que o inimigo saia do limite da tela
+    if enemyX <= -20:
+        enemyX_change = 0.3
+        enemyY += enemyY_change
+    elif enemyX >= 710:
+        enemyX_change = -0.3
+        enemyY += enemyY_change
 
     #chamando player na tela
     player(playerX, playerY)
