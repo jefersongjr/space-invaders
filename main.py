@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Inicializando o pygame
 pygame.init()
@@ -20,8 +21,8 @@ playerX_change = 0
 #Adicionando aliens
 
 enemyImg = pygame.image.load("img/enemy.png")
-enemyX = 370
-enemyY = 50
+enemyX = random.randint(0, 800)
+enemyY = random.randint(50, 150)
 enemyX_change = 0
 
 #função que cria a nave
