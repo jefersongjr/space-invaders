@@ -17,9 +17,20 @@ playerX = 370
 playerY = 480
 playerX_change = 0
 
+#Adicionando aliens
+
+enemyImg = pygame.image.load("img/enemy.png")
+enemyX = 370
+enemyY = 50
+enemyX_change = 0
+
 #função que cria a nave
 def player(x, y):
     screen.blit(playerImg, (x, y))
+
+#função que cria a nave
+def enemy(x, y):
+    screen.blit(enemyImg, (x, y))
 
 # Loop do jogo
 running = True
@@ -54,6 +65,9 @@ while running:
 
     #chamando player na tela
     player(playerX, playerY)
+    
+    #chamando alien na tela
+    enemy(enemyX, enemyY)
     
     # Atualiza a tela
     pygame.display.update()
