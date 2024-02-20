@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 # Inicializando o pygame
 pygame.init()
@@ -36,6 +37,9 @@ bulletX_change = 4
 bulletY_change = 40
 bullet_state = "ready"
 
+#Pontuação
+score = 0
+
 def fire_bullet(x,y):
     global bullet_state
     bullet_state = "fire"
@@ -49,6 +53,14 @@ def player(x, y):
 #função que cria a nave
 def enemy(x, y):
     screen.blit(enemyImg, (x, y))
+
+
+def isCollision(enemyX, enemyY, bulletX, bulletY):
+    distance = math.sqrt(math.pow((enemyX + 60) - bulletX, 2) + (math.pow((enemyY + 32) - bulletY, 2)))
+    if distance < 60 and bullet_state == "fire":  # Adicionando a condição bullet_state
+        return True
+    else:
+        return False
 
 # Loop do jogo
 running = True
@@ -67,9 +79,9 @@ while running:
         # Vericar qual qual seta esta sendo clicada
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                playerX_change = -5
+                playerX_change = -3
             if event.key == pygame.K_RIGHT:
-                playerX_change = 5
+                playerX_change = 3
             if event.key == pygame.K_SPACE:
                 if bullet_state is "ready":
                     bulletX = playerX
@@ -109,6 +121,17 @@ while running:
     if bullet_state is "fire":
         fire_bullet(playerX, bulletY)
         bulletY -= bulletX_change
+
+    #Colisão
+
+    collision = isCollision(enemyX, enemyY, bulletX, bulletY)
+    if collision:
+        bulletY = 480
+        bullet_state = "ready"
+        score += 1
+        print(score)
+        enemyX = random.randint(0, 735)
+        enemyY = random.randint(50, 150)
 
     #chamando player na tela
     player(playerX, playerY)
