@@ -13,23 +13,31 @@ pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load("img/ufo.png")
 pygame.display.set_icon(icon)
 
-#Background
+# Background
 background = pygame.image.load("img/background.png")
 
-#Adicionando Nave
+# Adicionando Nave
 playerImg = pygame.image.load("img/player.png")
 playerX = 370
 playerY = 480
 playerX_change = 0
 
-#Adicionando aliens
-enemyImg = pygame.image.load("img/enemy.png")
-enemyX = random.randint(0, 800)
-enemyY = random.randint(50, 150)
-enemyX_change = 1.5
-enemyY_change = 40
+# Adicionando aliens
+enemyImg = []
+enemyX = []
+enemyY = []
+enemyX_change = []
+enemyY_change = []
+num_of_enemies = 6
 
-#Adicionando míssil
+for i in range(num_of_enemies):
+    enemyImg.append(pygame.image.load("img/enemy.png"))
+    enemyX.append(random.randint(0, 800))
+    enemyY.append(random.randint(50, 150))
+    enemyX_change.append(1.5)
+    enemyY_change.append(40)
+
+# Adicionando míssil
 bulletImg = pygame.image.load("img/bullet.png")
 bulletX = 0
 bulletY = 480
@@ -37,107 +45,99 @@ bulletX_change = 4
 bulletY_change = 40
 bullet_state = "ready"
 
-#Pontuação
+# Pontuação
 score = 0
 
-def fire_bullet(x,y):
+def fire_bullet(x, y):
     global bullet_state
     bullet_state = "fire"
-    screen.blit(bulletImg, (x + 16 , y + 10))
+    screen.blit(bulletImg, (x + 16, y + 10))
 
-
-#função que cria a nave
+# função que cria a nave
 def player(x, y):
     screen.blit(playerImg, (x, y))
 
-#função que cria a nave
-def enemy(x, y):
-    screen.blit(enemyImg, (x, y))
-
+# função que cria o inimigo
+def enemy(x, y, i):
+    screen.blit(enemyImg[i], (x, y))
 
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt(math.pow((enemyX + 60) - bulletX, 2) + (math.pow((enemyY + 32) - bulletY, 2)))
-    if distance < 60 and bullet_state == "fire":  # Adicionando a condição bullet_state
+    if distance < 60 and bullet_state == "fire":
         return True
-    else:
-        return False
+    return False
 
 # Loop do jogo
 running = True
 while running:
-    
-    #Cor da tela
+    # Cor da tela
     screen.fill((0, 0, 0))
-    
-    #adicionando imagem de fundo
+
+    # adicionando imagem de fundo
     screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        # Vericar qual qual seta esta sendo clicada
+        # Verificar qual seta está sendo clicada
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 playerX_change = -3
             if event.key == pygame.K_RIGHT:
                 playerX_change = 3
             if event.key == pygame.K_SPACE:
-                if bullet_state is "ready":
+                if bullet_state == "ready":
                     bulletX = playerX
                     fire_bullet(playerX, bulletY)
-        
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
- 
 
     # adicionando movimento ao eixo horizontal
     playerX += playerX_change
 
-    # evitando que o nava saia do limite da tela
+    # evitando que o nave saia do limite da tela
     if playerX <= 0:
         playerX = 0
     elif playerX >= 736:
-        playerX =736
-
+        playerX = 736
 
     # adicionando movimento ao eixo horizontal do inimigo
-    enemyX += enemyX_change
+    for i in range(num_of_enemies):
+        enemyX[i] += enemyX_change[i]
+        if enemyX[i] <= -20:
+            enemyX_change[i] = 1.5
+            enemyY[i] += enemyY_change[i]
+        elif enemyX[i] >= 710:
+            enemyX_change[i] = -1.5
+            enemyY[i] += enemyY_change[i]
 
-    # evitando que o inimigo saia do limite da tela
-    if enemyX <= -20:
-        enemyX_change = 1.5
-        enemyY += enemyY_change
-    elif enemyX >= 710:
-        enemyX_change = -1.5
-        enemyY += enemyY_change
+        # Colisão
+        collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+        if collision:
+            bulletY = 480
+            bullet_state = "ready"
+            score += 1
+            print(score)
+            enemyX[i] = random.randint(0, 735)
+            enemyY[i] = random.randint(50, 150)
 
-    #Movimento do míssil
+        # chamando alien na tela
+        enemy(enemyX[i], enemyY[i], i)
+
+    # Movimento do míssil
     if bulletY <= 0:
         bulletY = 480
         bullet_state = "ready"
 
-    if bullet_state is "fire":
+    if bullet_state == "fire":
         fire_bullet(playerX, bulletY)
         bulletY -= bulletX_change
 
-    #Colisão
-
-    collision = isCollision(enemyX, enemyY, bulletX, bulletY)
-    if collision:
-        bulletY = 480
-        bullet_state = "ready"
-        score += 1
-        print(score)
-        enemyX = random.randint(0, 735)
-        enemyY = random.randint(50, 150)
-
-    #chamando player na tela
+    # chamando player na tela
     player(playerX, playerY)
-    
-    #chamando alien na tela
-    enemy(enemyX, enemyY)
-    
+
     # Atualiza a tela
     pygame.display.update()
