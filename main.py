@@ -25,7 +25,7 @@ playerX_change = 0
 enemyImg = pygame.image.load("img/enemy.png")
 enemyX = random.randint(0, 800)
 enemyY = random.randint(50, 150)
-enemyX_change = 4
+enemyX_change = 1.5
 enemyY_change = 40
 
 #Adicionando míssil
@@ -71,7 +71,9 @@ while running:
             if event.key == pygame.K_RIGHT:
                 playerX_change = 5
             if event.key == pygame.K_SPACE:
-                fire_bullet(playerX, bulletY)
+                if bullet_state is "ready":
+                    bulletX = playerX
+                    fire_bullet(playerX, bulletY)
         
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -93,13 +95,17 @@ while running:
 
     # evitando que o inimigo saia do limite da tela
     if enemyX <= -20:
-        enemyX_change = 4
+        enemyX_change = 1.5
         enemyY += enemyY_change
     elif enemyX >= 710:
-        enemyX_change = -4
+        enemyX_change = -1.5
         enemyY += enemyY_change
 
     #Movimento do míssil
+    if bulletY <= 0:
+        bulletY = 480
+        bullet_state = "ready"
+
     if bullet_state is "fire":
         fire_bullet(playerX, bulletY)
         bulletY -= bulletX_change
